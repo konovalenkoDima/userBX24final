@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8fbf13abc5809fa6ed63d1f60614100a",
+    "content-hash": "9b36d1c2bedc6977cc2214faa81a8a48",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -637,6 +637,62 @@
                 "source": "https://github.com/thephpleague/flysystem/tree/master"
             },
             "time": "2018-08-22T07:45:22+00:00"
+        },
+        {
+            "name": "mesilov/bitrix24-php-sdk",
+            "version": "0.7.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mesilov/bitrix24-php-sdk.git",
+                "reference": "15710a13ffd52a92f6068d80842fefe430a8f32a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mesilov/bitrix24-php-sdk/zipball/15710a13ffd52a92f6068d80842fefe430a8f32a",
+                "reference": "15710a13ffd52a92f6068d80842fefe430a8f32a",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "php": ">=5.3.2",
+                "psr/log": "^1.0"
+            },
+            "require-dev": {
+                "jakub-onderka/php-console-highlighter": "~0.3",
+                "jakub-onderka/php-parallel-lint": "0.9",
+                "phpunit/phpunit": "~4.8",
+                "phpunit/phpunit-mock-objects": "2.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Maxim Mesilov",
+                    "homepage": "https://github.com/mesilov/"
+                }
+            ],
+            "description": "A powerfull PHP library for the Bitrix24 REST API",
+            "homepage": "https://github.com/mesilov/bitrix24-php-sdk",
+            "keywords": [
+                "Bitrix24",
+                "api",
+                "php",
+                "rest"
+            ],
+            "support": {
+                "issues": "https://github.com/mesilov/bitrix24-php-sdk/issues",
+                "source": "https://github.com/mesilov/bitrix24-php-sdk/tree/0.7.0"
+            },
+            "time": "2020-07-10T22:11:52+00:00"
         },
         {
             "name": "monolog/monolog",
