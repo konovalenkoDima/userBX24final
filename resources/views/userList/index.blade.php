@@ -16,7 +16,7 @@
         <th scope="col">Фамилия</th>
         <th scope="col">Емаил</th>
     </tr>
-    @foreach($credentias['result'] as $item)
+    @foreach($users['result'] as $item)
         <tr>
             <td>{{$item['ID']}}</td>
             <td>{{$item['NAME']}}</td>

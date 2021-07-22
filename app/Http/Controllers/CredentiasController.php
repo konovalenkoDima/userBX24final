@@ -8,29 +8,45 @@ use Illuminate\Database\Eloquent\Model;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 
+
 class CredentiasController extends Controller
 {
     public function setCredentias(Request $request)
     {
+        if ((!is_array($request)) || (count($request)!=10)){
+            $record = new Credentias;
+            $record->domain = $request->DOMAIN;
+            $record->lang = $request->LANG;
+            $record->app_sid = $request->APP_SID;
+            $record->auth_id = $request->AUTH_ID;
+            $record->auth_expire = $request->AUTH_EXPIRES;
+            $record->refresh_id = $request->REFRESH_ID;
+            $record->member_id = $request->member_id;
+            $record->save();
+            return view('install.install');
+        } else {
+            echo 'Incorrect data in Request';
+            die();
+        }
 
-        $record = new Credentias;
-        $record->domain = $request->DOMAIN;
-        $record->lang = $request->LANG;
-        $record->app_sid = $request->APP_SID;
-        $record->auth_id = $request->AUTH_ID;
-        $record->auth_expire = $request->AUTH_EXPIRES;
-        $record->refresh_id = $request->REFRESH_ID;
-        $record->member_id = $request->member_id;
-        $record->save();
-
-        return view('install.install');
     }
 
     public function getUser(Request $request)
     {
-        $record = Credentias::where('domain', $request->DOMAIN)
-                            ->latest()
-                            ->first();
+        try {
+            if ($record = Credentias::where('domain', $request->DOMAIN)
+                ->count() != 0){
+                $record = Credentias::where('domain', $request->DOMAIN)
+                    ->latest()
+                    ->first();
+            } else {
+                throw new \Exception('Ошибка записи данных при становке приложения.');
+            }
+        } catch (\Exception $error){
+            echo $error;
+            die();
+        }
+
 
         $obB24App = new \Bitrix24\Bitrix24(false);
         $obB24App->setApplicationSecret(env('B24_APPLICATION_SECRET'));
@@ -45,6 +61,6 @@ class CredentiasController extends Controller
         $obB24User = new \Bitrix24\User\User($obB24App);
         $arBX24Users = $obB24User->get('', '', '');
 
-        return view('userList.index', ['credentias' => $arBX24Users]);
+        return view('userList.index', ['users' => $arBX24Users]);
     }
 }
