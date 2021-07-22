@@ -37,7 +37,7 @@ class CredentiasController extends Controller
             $record = Credentias::where('domain', $request->DOMAIN)
                 ->latest()
                 ->first();
-            if ($record == NULL){
+            if (is_null($record)){
                 throw new \Exception('Ошибка записи данных при установке приложения.');
             }
         } catch (\Exception $error){
