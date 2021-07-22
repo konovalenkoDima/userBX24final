@@ -34,19 +34,16 @@ class CredentiasController extends Controller
     public function getUser(Request $request)
     {
         try {
-            if ($record = Credentias::where('domain', $request->DOMAIN)
-                ->count() != 0){
-                $record = Credentias::where('domain', $request->DOMAIN)
-                    ->latest()
-                    ->first();
-            } else {
-                throw new \Exception('Ошибка записи данных при становке приложения.');
+            $record = Credentias::where('domain', $request->DOMAIN)
+                ->latest()
+                ->first();
+            if ($record == NULL){
+                throw new \Exception('Ошибка записи данных при установке приложения.');
             }
         } catch (\Exception $error){
             echo $error;
             die();
         }
-
 
         $obB24App = new \Bitrix24\Bitrix24(false);
         $obB24App->setApplicationSecret(env('B24_APPLICATION_SECRET'));
