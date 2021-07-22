@@ -28,25 +28,14 @@ class CredentiasController extends Controller
 
     public function getUser(Request $request)
     {
-
-
-
-
         $record = Credentias::where('domain', $request->DOMAIN)
-            ->latest()
-            ->first();
+                            ->latest()
+                            ->first();
 
-        $arParams['B24_APPLICATION_ID'] = 'local.60f6f2cf9f75e2.74118486';
-        $arParams['B24_APPLICATION_SECRET'] = 'RIANpCVgdOmh0nwdW09oP6zMNgDfbhka0SXAAXTw5CRdIZ3egw';
-        $arParams['B24_APPLICATION_SCOPE'] = array('user');
-
-        $log = new Logger('bitrix24');
-        $log->pushHandler(new StreamHandler('path/to/your.log', Logger::DEBUG));
-
-        $obB24App = new \Bitrix24\Bitrix24(false, $log);
-        $obB24App->setApplicationScope($arParams['B24_APPLICATION_SCOPE']);
-        $obB24App->setApplicationId($arParams['B24_APPLICATION_ID']);
-        $obB24App->setApplicationSecret($arParams['B24_APPLICATION_SECRET']);
+        $obB24App = new \Bitrix24\Bitrix24(false);
+        $obB24App->setApplicationSecret(env('B24_APPLICATION_SECRET'));
+        $obB24App->setApplicationId(env('B24_APPLICATION_ID'));
+        $obB24App->setApplicationScope((array)json_decode(env('B24_APPLICATION_SCOPE')));
 
         $obB24App->setDomain($record->domain);
         $obB24App->setMemberId($record->member_id);

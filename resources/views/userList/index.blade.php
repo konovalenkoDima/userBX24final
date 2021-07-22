@@ -24,7 +24,6 @@
             <td>{{$item['EMAIL']}}</td>
         </tr>
     @endforeach
-
 </table>
 </body>
 </html>
