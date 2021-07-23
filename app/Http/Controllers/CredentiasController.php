@@ -73,6 +73,9 @@ class CredentiasController extends Controller
             $newRecord->save();
 
             curl_close($curl);
+            $record = Credentias::where('domain', $request->DOMAIN)
+                ->latest()
+                ->first();
         }
 
         $obB24App = new \Bitrix24\Bitrix24(false);
