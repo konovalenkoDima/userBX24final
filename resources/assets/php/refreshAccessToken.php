@@ -1,35 +1,31 @@
 <?php
+
 use App\Credentias;
 
-    $grand_type = 'refresh_token';
-    $client_id = env('B24_APPLICATION_ID');
-    $client_secret = env('B24_APPLICATION_SECRET');
+$grant_type = 'refresh_token';
+$client_id = env('B24_APPLICATION_ID');
+$client_secret = env('B24_APPLICATION_SECRET');
 
-    $portals = Credentias::distinct()
-                            ->get();
-    foreach ($portals as $item)
-    {
-        $refresh_token = $item->refresh_id;
-        $url = 'https://oauth.bitrix.info/oauth/token/?grant_type='.$grand_type.'&client_id='.$client_id.
-            '&client_secret='.$client_secret.'&refresh_token='.$refresh_token;
+$portals = Credentias::all();
+foreach ($portals as $item) {
+    $dateDiff = date_diff(new \DateTime($item->updated_at), new \DateTime(), true);
+    if (($dateDiff->format('%h') != '0') || ($dateDiff->format('$a')) > 0) {
+        $obB24App = new \Bitrix24\Bitrix24(false);
+        $obB24App->setApplicationSecret(env('B24_APPLICATION_SECRET'));
+        $obB24App->setApplicationId(env('B24_APPLICATION_ID'));
+        $obB24App->setApplicationScope((array)json_decode(env('B24_APPLICATION_SCOPE')));
 
-        $curl = curl_init($url);
-        curl_setopt_array($curl, [
-            CURLOPT_HEADER => true,
-            CURLOPT_POST => true,
-            CURLOPT_RETURNTRANSFER => true
-        ]);
-        $result = json_decode(curl_exec($curl));
+        $obB24App->setDomain($item->domain);
+        $obB24App->setMemberId($item->member_id);
+        $obB24App->setAccessToken($item->auth_id);
+        $obB24App->setRefreshToken($item->refresh_id);
+        $obB24App->setRedirectUri('/');
 
+        $newKeys = $obB24App->getNewAccessToken();
         $record = new Credentias;
-        $record->domain = $item->domain;
-        $record->lang =$item->lang;
-        $record->app_sid=$item->app_sid;
-        $record->auth_id=$result['access_token'];
-        $record->auth_expire = $item->auth_expire ;
-        $record->refresh_id = $result['refresh_token'];
-        $record->member_id = $item->member_id;
-        $record->save();
+        $newAuth = $record->updateAuthdata($newKeys, $item->domain);
 
-        curl_close($curl);
+        $obB24App->setAccessToken($item->auth_id);
+        $obB24App->setRefreshToken($item->refresh_id);
     }
+}
