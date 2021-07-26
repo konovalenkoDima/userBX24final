@@ -17,4 +17,25 @@ class Credentias extends Model
         'refresh_id',
         'member_id'
     ];
+
+    public function getAuthData($domain)
+    {
+        $record = Credentias::where('domain', $domain)
+            ->first();
+
+        return $record;
+    }
+
+    public function updateAuthData($keyArray, $domain)
+    {
+        Credentias::where('domain', $domain)
+            ->update([
+                'auth_id',
+                $keyArray['access_token'],
+                'refresh_id',
+                $keyArray['refresh_token']
+            ]);
+
+        return true;
+    }
 }

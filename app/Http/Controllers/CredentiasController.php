@@ -13,7 +13,7 @@ class CredentiasController extends Controller
 {
     public function setCredentias(Request $request)
     {
-        if ((!is_array($request)) || (count($request)!=10)){
+        if ((!is_array($request)) || (count($request) != 10)) {
             $record = new Credentias;
             $record->domain = $request->DOMAIN;
             $record->lang = $request->LANG;
@@ -28,19 +28,17 @@ class CredentiasController extends Controller
             echo 'Incorrect data in Request';
             die();
         }
-
     }
 
     public function getUser(Request $request)
     {
         try {
-            $record = Credentias::where('domain', $request->DOMAIN)
-                ->latest()
-                ->first();
-            if (is_null($record)){
+            $record = new Credentias;
+            $accessData = $record->getAuthdata($request->DOMAIN);
+            if (is_null($accessData)) {
                 throw new \Exception('Ошибка записи данных при установке приложения.');
             }
-        } catch (\Exception $error){
+        } catch (\Exception $error) {
             echo $error;
             die();
         }
@@ -50,10 +48,20 @@ class CredentiasController extends Controller
         $obB24App->setApplicationId(env('B24_APPLICATION_ID'));
         $obB24App->setApplicationScope((array)json_decode(env('B24_APPLICATION_SCOPE')));
 
-        $obB24App->setDomain($record->domain);
-        $obB24App->setMemberId($record->member_id);
-        $obB24App->setAccessToken($record->auth_id);
-        $obB24App->setRefreshToken($record->refresh_id);
+        $obB24App->setDomain($accessData->domain);
+        $obB24App->setMemberId($accessData->member_id);
+        $obB24App->setAccessToken($accessData->auth_id);
+        $obB24App->setRefreshToken($accessData->refresh_id);
+        $obB24App->setRedirectUri('/');
+
+        $dateDiff = date_diff(new \DateTime($accessData->updated_at), new \DateTime(), true);
+
+        if (($dateDiff->format('%h') != '0') || ($dateDiff->format('$a')) > 0) {
+            $newKeys = $obB24App->getNewAccessToken();
+            $record->updateAuthdata($newKeys, $request->DOMAIN);
+        }
+        $obB24App->setAccessToken($accessData->auth_id);
+        $obB24App->setRefreshToken($accessData->refresh_id);
 
         $obB24User = new \Bitrix24\User\User($obB24App);
         $arBX24Users = $obB24User->get('', '', '');
